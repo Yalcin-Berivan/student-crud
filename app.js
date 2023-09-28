@@ -4,6 +4,10 @@ const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.set('view engine', 'ejs')
+const methodOverride = require('method-override');
+
+app.use(methodOverride('_method'));
 
 const mongoose = require("mongoose");
 const StudentModel = require("./student.schema");
@@ -15,7 +19,10 @@ async function main() {
   //ÖĞRENCİLERİ GETİR:
   app.get("/students", async (req, res) => {
     const students = await StudentModel.find();
-    res.send(students);
+    res.render('student', {
+      students
+  })
+    // res.send(students);
   });
 
   // İD'Sİ VERİLEN ÖĞRENCİYİ GETİR:
@@ -25,6 +32,16 @@ async function main() {
     const students = await StudentModel.findById(id);
     res.send(students);
   });
+
+  // <% students.forEach((student)=> { %>
+  //   <tr>tetete
+  //       <!-- <td><%= student.tcId %></td>
+  //       <td><%= student.name %></td>
+  //       <td><%= student.surname %></td>
+  //       <td><%= student.isActive %></td>
+  //       <td><%= student.adress %></td>    -->
+  //   </tr>           
+  //   <% }) %>
 
   //ÖĞRENCİ OLUŞTURMA:
   app.post("/students", async (req, res) => {
@@ -44,10 +61,13 @@ async function main() {
   });
 
   // ÖĞRENCİ SİLME
-  app.delete("/students/:id", async (req, res) => {
+  app.delete("/students/delete/:id", async (req, res) => {
     const id = req.params.id;
     await StudentModel.deleteOne({ _id: id });
-    res.send("Kayıt silidi");
+    const students = await StudentModel.find();
+    res.render('student', {
+      students
+  })
   });
 
   // ÖĞRENCİYİ TC KİMLİK NUMARASINA GÖRE GETİRME:
