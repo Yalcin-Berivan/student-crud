@@ -24,7 +24,6 @@ async function main() {
   })
     // res.send(students);
   });
-
   // İD'Sİ VERİLEN ÖĞRENCİYİ GETİR:
   app.get("/students/:id", async (req, res) => {
     console.log("---------------------");
